@@ -227,17 +227,31 @@
             gap: .5rem;
         }
 
-        .card img {
+        /* Contenedor cuadrado para la imagen */
+        .card-media {
             width: 100%;
-            height: 160px;
-            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            /* siempre cuadrado */
             border-radius: 8px;
-            background: #1f2937;
+            background: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
+        /* Imagen se adapta sin deformarse */
+        .card-media img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            /* se ve completa, sin recorte raro */
+        }
+
+        /* Placeholder cuando no hay imagen */
         .noimg {
             width: 100%;
-            height: 160px;
+            aspect-ratio: 1 / 1;
             border-radius: 8px;
             background: repeating-linear-gradient(45deg,
                     #111827,
@@ -296,8 +310,8 @@
 
                 <form onsubmit="createItem(event)">
                     <input id="name" placeholder="Nombre" required />
-                    <input id="price" type="number" step="0.01" min="0" placeholder="Precio (≥ 0)" required />
-                    <input id="stock" type="number" step="1" min="0" placeholder="Stock (≥ 0)" value="0" />
+                    <input id="price" type="number" step="0.01" min="0" placeholder="Precio" required />
+                    <input id="stock" type="number" step="1" min="0" placeholder="Stock" value="0" />
                     <input id="mediaUrl" type="url" placeholder="Enlace de imagen (opcional)" />
                     <button>Agregar / Guardar</button>
                 </form>
@@ -323,23 +337,26 @@
             const grid = document.getElementById('itemsGrid');
 
             grid.innerHTML = data.map(i => `
-        <div class="card">
-          ${i.mediaUrl
+  <div class="card">
+    <div class="card-media">
+      ${i.mediaUrl
                     ? `<img src="${i.mediaUrl}" alt="${escapeHtml(i.name)}" />`
                     : `<div class="noimg">Sin imagen</div>`}
-          <h3>${escapeHtml(i.name)}</h3>
-          <p><strong>Precio:</strong> $${i.price}</p>
-          <p><strong>Stock:</strong> ${i.stock}</p>
+    </div>
+    <h3>${escapeHtml(i.name)}</h3>
+    <p><strong>Precio:</strong> $${i.price}</p>
+    <p><strong>Stock:</strong> ${i.stock}</p>
 
-          <div class="actions">
-            <button class="btn-secondary"
-              onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock}, '${(i.mediaUrl || '').replaceAll("'", "\\'")}')">
-              Editar
-            </button>
-            <button class="btn-danger" onclick="del(${i.id})">Eliminar</button>
-          </div>
-        </div>
-      `).join('');
+    <div class="actions">
+      <button class="btn-secondary"
+        onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock}, '${(i.mediaUrl || '').replaceAll("'", "\\'")}')">
+        Editar
+      </button>
+      <button class="btn-danger" onclick="del(${i.id})">Eliminar</button>
+    </div>
+  </div>
+`).join('');
+
         }
 
         function prefill(id, name, price, stock, mediaUrl) {
