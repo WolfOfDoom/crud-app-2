@@ -5,119 +5,308 @@
     <meta charset="utf-8" />
     <title>CRUD Items</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
     <style>
+        :root {
+            --bg-body: #020617;
+            --bg-card: #020617cc;
+            --accent: #6366f1;
+            --accent-soft: rgba(99, 102, 241, 0.15);
+            --accent-strong: #4f46e5;
+            --border-subtle: rgba(148, 163, 184, 0.4);
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            margin: 24px;
-            max-width: 860px
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+            color: var(--text-main);
+            padding: 24px;
         }
 
-        h1 {
-            margin-bottom: 8px
-        }
-
-        table {
-            border-collapse: collapse;
+        .app {
             width: 100%;
-            margin-top: 10px
+            max-width: 960px;
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left
+        .card {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 20px 20px 16px;
+            box-shadow:
+                0 20px 45px rgba(15, 23, 42, 0.8),
+                0 0 0 1px var(--border-subtle);
+            backdrop-filter: blur(14px);
         }
 
-        form {
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(1.6rem, 2vw + 0.8rem, 2rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        .muted {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin: 0 0 10px;
+        }
+
+        main {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 8px;
-            margin: 12px 0
-        }
-
-        input[type="number"] {
-            width: 100%
+            gap: 16px;
         }
 
         .row {
             display: flex;
             gap: 8px;
-            align-items: center
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .muted {
-            color: #666;
-            font-size: 12px
+        input,
+        button {
+            font: inherit;
+        }
+
+        input {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
+            padding: 8px 12px;
+            outline: none;
+            min-width: 0;
+        }
+
+        input::placeholder {
+            color: #6b7280;
+        }
+
+        input:focus-visible {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
         }
 
         button {
-            cursor: pointer
+            cursor: pointer;
+            border-radius: 999px;
+            border: none;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
+            white-space: nowrap;
         }
 
-        .grid {
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+            box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+            filter: brightness(0.96);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.65);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f97373, var(--danger));
+            box-shadow: none;
+        }
+
+        form {
             display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            margin-top: 1rem;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+            margin: 10px 0 4px;
         }
 
-        .card {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: .5rem;
-        }
-
-        .card img {
+        form button {
             width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 8px;
-            background: #e5e7eb;
         }
 
-        .card h3 {
-            margin: .5rem 0;
+        @media (max-width: 720px) {
+            form {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
-        .card .actions {
+        @media (max-width: 480px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .row button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 8px;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(30, 41, 59, 0.9);
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        thead {
+            background: radial-gradient(circle at top left,
+                    rgba(99, 102, 241, 0.25),
+                    rgba(15, 23, 42, 0.95));
+        }
+
+        th,
+        td {
+            padding: 9px 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            font-weight: 600;
+            color: #e5e7eb;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.9);
+        }
+
+        tbody tr:nth-child(odd) {
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        tbody tr:hover {
+            background: rgba(30, 64, 175, 0.4);
+        }
+
+        td:last-child {
+            white-space: nowrap;
+        }
+
+        td:last-child button {
+            font-size: 12px;
+            padding: 5px 10px;
+        }
+
+        td:last-child button+button {
+            margin-left: 6px;
+        }
+
+        footer {
+            margin-top: 10px;
             display: flex;
-            gap: .5rem;
-            margin-top: .5rem;
-        }
-
-        .card .actions button {
-            flex: 1;
+            justify-content: flex-end;
+            font-size: 11px;
+            color: var(--text-muted);
         }
     </style>
 </head>
 
 <body>
-    <h1>Inventario</h1>
-    <p class="muted">Demostración: listar, ver detalle, crear, editar y eliminar.</p>
+    <div class="app">
+        <div class="card">
+            <header>
+                <div>
+                    <h1>Inventario</h1>
+                    <p class="muted">Demostración CRUD: listar, ver detalle, crear, editar y eliminar productos.</p>
+                </div>
+                <span class="badge">API · Prisma · Render</span>
+            </header>
 
-    <div class="row">
-        <input id="detailId" type="number" placeholder="ID para detalle/edición" />
-        <button onclick="getOne()">Consultar individual</button>
+            <main>
+                <div class="row">
+                    <input id="detailId" type="number" placeholder="ID para detalle / edición" />
+                    <button class="btn-secondary" onclick="getOne()">Consultar individual</button>
+                </div>
+
+                <form onsubmit="createItem(event)">
+                    <input id="name" placeholder="Nombre" required />
+                    <input id="price" type="number" step="0.01" placeholder="Precio" required />
+                    <input id="stock" type="number" step="1" placeholder="Stock" value="0" />
+                    <button>Agregar</button>
+                </form>
+
+                <section>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody"></tbody>
+                    </table>
+                </section>
+            </main>
+
+            <footer>
+                <span>v1 · CRUD de ejemplo</span>
+            </footer>
+        </div>
     </div>
-
-    <form onsubmit="createItem(event)">
-        <input id="name" placeholder="Nombre" required />
-        <input id="price" type="number" step="0.01" placeholder="Precio" required />
-        <input id="stock" type="number" step="1" placeholder="Stock" value="0" />
-        <input id="mediaUrl" type="url" placeholder="Enlace de imagen (opcional)" />
-        <button>Agregar</button>
-    </form>
-
-    <section>
-        <h2>Inventario</h2>
-        <div id="itemsGrid" class="grid"></div>
-    </section>
-
 
     <script>
         const api = (p = '') => fetch(location.origin + '/api' + p);
@@ -125,32 +314,27 @@
         async function refresh() {
             const res = await api('/items');
             const data = await res.json();
-            const grid = document.getElementById('itemsGrid');
-
-            grid.innerHTML = data.map(i => `
-      <div class="card">
-        ${i.mediaUrl ? `<img src="${i.mediaUrl}" alt="${i.name}" />` : `<div class="noimg">Sin imagen</div>`}
-        <h3>${i.name}</h3>
-        <p><strong>Precio:</strong> $${i.price}</p>
-        <p><strong>Stock:</strong> ${i.stock}</p>
-
-        <div class="actions">
-          <button onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock}, '${i.mediaUrl || ''}')">Editar</button>
-          <button onclick="del(${i.id})">Eliminar</button>
-        </div>
-      </div>
-    `).join('');
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = data.map(i => `
+        <tr>
+          <td>${i.id}</td>
+          <td>${i.name}</td>
+          <td>$${i.price}</td>
+          <td>${i.stock}</td>
+          <td>
+            <button class="btn-secondary" onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock})">Editar</button>
+            <button class="btn-danger" onclick="del(${i.id})">Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
         }
 
-
-        function prefill(id, name, price, stock, mediaUrl) {
+        function prefill(id, name, price, stock) {
             document.getElementById('detailId').value = id;
             document.getElementById('name').value = unescapeHtml(name);
             document.getElementById('price').value = price;
             document.getElementById('stock').value = stock;
-            document.getElementById('mediaUrl').value = mediaUrl || "";
         }
-
 
         async function getOne() {
             const id = document.getElementById('detailId').value;
@@ -171,7 +355,6 @@
             });
             if (res.ok) { e.target.reset(); await refresh(); } else alert('Error al crear');
         }
-
 
         async function del(id) {
             if (!confirm('¿Eliminar?')) return;
@@ -196,8 +379,16 @@
             e.preventDefault();
             const id = document.getElementById('detailId').value;
             const payload = bodyFromInputs();
-            const res = await fetch('/api/items/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (res.ok) { document.getElementById('detailId').value = ''; e.target.reset(); refresh(); }
+            const res = await fetch('/api/items/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                document.getElementById('detailId').value = '';
+                e.target.reset();
+                refresh();
+            }
         });
 
         function bodyFromInputs() {
@@ -208,8 +399,22 @@
             };
         }
 
-        function escapeHtml(s) { return s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", "&#039;") }
-        function unescapeHtml(s) { return s.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').replaceAll('&#039;', "'").replaceAll('&amp;', '&') }
+        function escapeHtml(s) {
+            return s
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", "&#039;");
+        }
+        function unescapeHtml(s) {
+            return s
+                .replaceAll('&lt;', '<')
+                .replaceAll('&gt;', '>')
+                .replaceAll('&quot;', '"')
+                .replaceAll('&#039;', "'")
+                .replaceAll('&amp;', '&');
+        }
 
         refresh();
     </script>
