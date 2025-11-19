@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"        // <- literal, no env()
+  url      = env("DATABASE_URL") // viene del plugin de Postgres en Railway
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Float
+  stock     Int
+  mediaUrl  String?   // ← enlace a imagen en la nube
+  createdAt DateTime @default(now())
+}
