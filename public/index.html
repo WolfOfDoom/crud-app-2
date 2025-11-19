@@ -5,88 +5,30 @@
     <meta charset="utf-8" />
     <title>CRUD Items</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-
     <style>
-        :root {
-            --bg-body: #020617;
-            --bg-card: #020617cc;
-            --accent: #6366f1;
-            --accent-soft: rgba(99, 102, 241, 0.15);
-            --accent-strong: #4f46e5;
-            --border-subtle: rgba(148, 163, 184, 0.4);
-            --text-main: #e5e7eb;
-            --text-muted: #9ca3af;
-            --danger: #ef4444;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background:
-                radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
-            color: var(--text-main);
-            padding: 24px;
-        }
-
-        .app {
-            width: 100%;
+            font-family: system-ui, sans-serif;
+            margin: 24px;
             max-width: 960px;
+            margin-inline: auto;
+            background: linear-gradient(135deg, #0f172a, #020617);
+            color: #e5e7eb;
         }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: 18px;
-            padding: 20px 20px 16px;
-            box-shadow:
-                0 20px 45px rgba(15, 23, 42, 0.8),
-                0 0 0 1px var(--border-subtle);
-            backdrop-filter: blur(14px);
+        h1 {
+            margin-bottom: 4px;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 12px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: clamp(1.6rem, 2vw + 0.8rem, 2rem);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            background: var(--accent-soft);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            white-space: nowrap;
+        h2 {
+            margin-top: 24px;
+            margin-bottom: 8px;
         }
 
         .muted {
-            color: var(--text-muted);
+            color: #9ca3af;
             font-size: 13px;
-            margin: 0 0 10px;
-        }
-
-        main {
-            display: grid;
-            gap: 16px;
+            margin-top: 0;
+            margin-bottom: 16px;
         }
 
         .row {
@@ -94,6 +36,7 @@
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
+            margin-bottom: 12px;
         }
 
         input,
@@ -103,11 +46,10 @@
 
         input {
             border-radius: 999px;
-            border: 1px solid var(--border-subtle);
-            background: rgba(15, 23, 42, 0.9);
-            color: var(--text-main);
+            border: 1px solid #475569;
             padding: 8px 12px;
-            outline: none;
+            background: #020617;
+            color: #e5e7eb;
             min-width: 0;
         }
 
@@ -116,8 +58,9 @@
         }
 
         input:focus-visible {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 1px var(--accent-soft);
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
         }
 
         button {
@@ -125,15 +68,14 @@
             border-radius: 999px;
             border: none;
             padding: 8px 14px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
             color: white;
             font-size: 14px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
-            white-space: nowrap;
         }
 
         button:hover {
@@ -148,20 +90,8 @@
             filter: brightness(0.96);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--border-subtle);
-            box-shadow: none;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(15, 23, 42, 0.9);
-            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.65);
-        }
-
         .btn-danger {
-            background: linear-gradient(135deg, #f97373, var(--danger));
+            background: linear-gradient(135deg, #f97373, #ef4444);
             box-shadow: none;
         }
 
@@ -169,7 +99,7 @@
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 8px;
-            margin: 10px 0 4px;
+            margin: 12px 0 4px;
         }
 
         form button {
@@ -198,115 +128,93 @@
             }
         }
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 8px;
-            overflow: hidden;
+        .grid {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            margin-top: 1rem;
+        }
+
+        .card {
+            background: #020617cc;
             border-radius: 12px;
-            border: 1px solid rgba(30, 41, 59, 0.9);
-            background: rgba(15, 23, 42, 0.85);
-        }
-
-        thead {
-            background: radial-gradient(circle at top left,
-                    rgba(99, 102, 241, 0.25),
-                    rgba(15, 23, 42, 0.95));
-        }
-
-        th,
-        td {
-            padding: 9px 10px;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        th {
-            font-weight: 600;
-            color: #e5e7eb;
-            border-bottom: 1px solid rgba(30, 41, 59, 0.9);
-        }
-
-        tbody tr:nth-child(odd) {
-            background: rgba(15, 23, 42, 0.6);
-        }
-
-        tbody tr:nth-child(even) {
-            background: rgba(15, 23, 42, 0.9);
-        }
-
-        tbody tr:hover {
-            background: rgba(30, 64, 175, 0.4);
-        }
-
-        td:last-child {
-            white-space: nowrap;
-        }
-
-        td:last-child button {
-            font-size: 12px;
-            padding: 5px 10px;
-        }
-
-        td:last-child button+button {
-            margin-left: 6px;
-        }
-
-        footer {
-            margin-top: 10px;
+            padding: 1rem;
+            box-shadow:
+                0 10px 25px rgba(15, 23, 42, 0.9),
+                0 0 0 1px rgba(30, 64, 175, 0.3);
             display: flex;
-            justify-content: flex-end;
-            font-size: 11px;
-            color: var(--text-muted);
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #1f2937;
+        }
+
+        .noimg {
+            width: 100%;
+            height: 160px;
+            border-radius: 8px;
+            background: repeating-linear-gradient(45deg,
+                    #111827,
+                    #111827 8px,
+                    #1f2937 8px,
+                    #1f2937 16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .card h3 {
+            margin: .5rem 0 0.25rem;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .card .actions {
+            display: flex;
+            gap: .5rem;
+            margin-top: .5rem;
+        }
+
+        .card .actions button {
+            flex: 1;
+            font-size: 13px;
+            padding-block: 6px;
         }
     </style>
 </head>
 
 <body>
-    <div class="app">
-        <div class="card">
-            <header>
-                <div>
-                    <h1>Inventario</h1>
-                    <p class="muted">Demostración CRUD: listar, ver detalle, crear, editar y eliminar productos.</p>
-                </div>
-                <span class="badge">API · Prisma · Render</span>
-            </header>
+    <h1>Inventario</h1>
+    <p class="muted">Demostración: listar, ver detalle, crear, editar, eliminar y mostrar imágenes desde una URL.</p>
 
-            <main>
-                <div class="row">
-                    <input id="detailId" type="number" placeholder="ID para detalle / edición" />
-                    <button class="btn-secondary" onclick="getOne()">Consultar individual</button>
-                </div>
-
-                <form onsubmit="createItem(event)">
-                    <input id="name" placeholder="Nombre" required />
-                    <input id="price" type="number" step="0.01" placeholder="Precio" required />
-                    <input id="stock" type="number" step="1" placeholder="Stock" value="0" />
-                    <button>Agregar</button>
-                </form>
-
-                <section>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody"></tbody>
-                    </table>
-                </section>
-            </main>
-
-            <footer>
-                <span>v1 · CRUD de ejemplo</span>
-            </footer>
-        </div>
+    <div class="row">
+        <input id="detailId" type="number" placeholder="ID para detalle/edición" />
+        <button onclick="getOne()">Consultar individual</button>
     </div>
+
+    <form onsubmit="createItem(event)">
+        <input id="name" placeholder="Nombre" required />
+        <input id="price" type="number" step="0.01" placeholder="Precio" required />
+        <input id="stock" type="number" step="1" placeholder="Stock" value="0" />
+        <input id="mediaUrl" type="url" placeholder="Enlace de imagen (opcional)" />
+        <button>Agregar / Guardar</button>
+    </form>
+
+    <section>
+        <h2>Inventario</h2>
+        <div id="itemsGrid" class="grid"></div>
+    </section>
 
     <script>
         const api = (p = '') => fetch(location.origin + '/api' + p);
@@ -314,26 +222,31 @@
         async function refresh() {
             const res = await api('/items');
             const data = await res.json();
-            const tbody = document.getElementById('tbody');
-            tbody.innerHTML = data.map(i => `
-        <tr>
-          <td>${i.id}</td>
-          <td>${i.name}</td>
-          <td>$${i.price}</td>
-          <td>${i.stock}</td>
-          <td>
-            <button class="btn-secondary" onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock})">Editar</button>
+            const grid = document.getElementById('itemsGrid');
+
+            grid.innerHTML = data.map(i => `
+        <div class="card">
+          ${i.mediaUrl
+                    ? `<img src="${i.mediaUrl}" alt="${escapeHtml(i.name)}" />`
+                    : `<div class="noimg">Sin imagen</div>`}
+          <h3>${escapeHtml(i.name)}</h3>
+          <p><strong>Precio:</strong> $${i.price}</p>
+          <p><strong>Stock:</strong> ${i.stock}</p>
+
+          <div class="actions">
+            <button onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock}, '${(i.mediaUrl || '').replaceAll("'", "\\'")}')">Editar</button>
             <button class="btn-danger" onclick="del(${i.id})">Eliminar</button>
-          </td>
-        </tr>
+          </div>
+        </div>
       `).join('');
         }
 
-        function prefill(id, name, price, stock) {
+        function prefill(id, name, price, stock, mediaUrl) {
             document.getElementById('detailId').value = id;
             document.getElementById('name').value = unescapeHtml(name);
             document.getElementById('price').value = price;
             document.getElementById('stock').value = stock;
+            document.getElementById('mediaUrl').value = mediaUrl || "";
         }
 
         async function getOne() {
@@ -342,40 +255,48 @@
             const res = await api('/items/' + id);
             if (!res.ok) return alert('No encontrado');
             const i = await res.json();
-            alert(`ID: ${i.id}\nNombre: ${i.name}\nPrecio: $${i.price}\nStock: ${i.stock}`);
+            alert(`ID: ${i.id}\nNombre: ${i.name}\nPrecio: $${i.price}\nStock: ${i.stock}\nImagen: ${i.mediaUrl || 'Sin imagen'}`);
         }
 
         async function createItem(e) {
             e.preventDefault();
-            if (document.getElementById('detailId').value) return; // <- evita el POST cuando editas
+            // Si detailId tiene valor → estamos en modo EDITAR, no crear
+            if (document.getElementById('detailId').value) return;
             const payload = bodyFromInputs();
             const res = await fetch('/api/items', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if (res.ok) { e.target.reset(); await refresh(); } else alert('Error al crear');
+            if (res.ok) {
+                e.target.reset();
+                await refresh();
+            } else {
+                alert('Error al crear');
+            }
         }
 
         async function del(id) {
             if (!confirm('¿Eliminar?')) return;
             const res = await fetch('/api/items/' + id, { method: 'DELETE' });
-            if (res.ok) refresh(); else alert('No encontrado');
+            if (res.ok) refresh();
+            else alert('No encontrado');
         }
 
-        // Edita si hay ID en detailId
+        // Cuando cambia el ID, se hace GET y se rellena el formulario (incluida la imagen)
         document.getElementById('detailId').addEventListener('change', async (e) => {
             const id = e.target.value;
             if (!id) return;
             const res = await api('/items/' + id);
             if (res.ok) {
                 const i = await res.json();
-                prefill(i.id, i.name, i.price, i.stock);
+                prefill(i.id, i.name, i.price, i.stock, i.mediaUrl || "");
             }
         });
 
-        // Doble función del botón "Agregar" si hay ID → actualizar
+        // Si hay ID en detailId → el submit actualiza (PUT) en lugar de crear
         document.querySelector('form').addEventListener('submit', async (e) => {
-            if (!document.getElementById('detailId').value) return; // createItem ya cubrirá
+            if (!document.getElementById('detailId').value) return; // createItem ya lo maneja
             e.preventDefault();
             const id = document.getElementById('detailId').value;
             const payload = bodyFromInputs();
@@ -388,6 +309,8 @@
                 document.getElementById('detailId').value = '';
                 e.target.reset();
                 refresh();
+            } else {
+                alert('Error al actualizar');
             }
         });
 
@@ -395,7 +318,9 @@
             return {
                 name: document.getElementById('name').value.trim(),
                 price: Number(document.getElementById('price').value),
-                stock: Number(document.getElementById('stock').value || 0)
+                stock: Number(document.getElementById('stock').value || 0),
+                // 🔥 AQUÍ estaba el problema: antes NO enviabas mediaUrl al backend
+                mediaUrl: document.getElementById('mediaUrl').value.trim() || null
             };
         }
 
@@ -405,8 +330,9 @@
                 .replaceAll('<', '&lt;')
                 .replaceAll('>', '&gt;')
                 .replaceAll('"', '&quot;')
-                .replaceAll("'", "&#039;");
+                .replaceAll("'", '&#039;');
         }
+
         function unescapeHtml(s) {
             return s
                 .replaceAll('&lt;', '<')
