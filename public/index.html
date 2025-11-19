@@ -5,30 +5,88 @@
     <meta charset="utf-8" />
     <title>CRUD Items</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
     <style>
+        :root {
+            --bg-body: #020617;
+            --bg-card: #020617cc;
+            --accent: #6366f1;
+            --accent-soft: rgba(99, 102, 241, 0.15);
+            --accent-strong: #4f46e5;
+            --border-subtle: rgba(148, 163, 184, 0.4);
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            margin: 24px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+            color: var(--text-main);
+            padding: 24px;
+        }
+
+        .app {
+            width: 100%;
             max-width: 960px;
-            margin-inline: auto;
-            background: linear-gradient(135deg, #0f172a, #020617);
-            color: #e5e7eb;
         }
 
-        h1 {
-            margin-bottom: 4px;
+        .card-shell {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 20px 20px 16px;
+            box-shadow:
+                0 20px 45px rgba(15, 23, 42, 0.8),
+                0 0 0 1px var(--border-subtle);
+            backdrop-filter: blur(14px);
         }
 
-        h2 {
-            margin-top: 24px;
-            margin-bottom: 8px;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 12px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(1.6rem, 2vw + 0.8rem, 2rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            white-space: nowrap;
         }
 
         .muted {
-            color: #9ca3af;
+            color: var(--text-muted);
             font-size: 13px;
-            margin-top: 0;
-            margin-bottom: 16px;
+            margin: 0 0 10px;
+        }
+
+        main {
+            display: grid;
+            gap: 16px;
         }
 
         .row {
@@ -36,7 +94,6 @@
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 12px;
         }
 
         input,
@@ -46,10 +103,11 @@
 
         input {
             border-radius: 999px;
-            border: 1px solid #475569;
+            border: 1px solid var(--border-subtle);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-main);
             padding: 8px 12px;
-            background: #020617;
-            color: #e5e7eb;
+            outline: none;
             min-width: 0;
         }
 
@@ -58,9 +116,8 @@
         }
 
         input:focus-visible {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
         }
 
         button {
@@ -68,14 +125,15 @@
             border-radius: 999px;
             border: none;
             padding: 8px 14px;
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
             color: white;
             font-size: 14px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.1s ease;
+            white-space: nowrap;
         }
 
         button:hover {
@@ -90,8 +148,20 @@
             filter: brightness(0.96);
         }
 
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.65);
+        }
+
         .btn-danger {
-            background: linear-gradient(135deg, #f97373, #ef4444);
+            background: linear-gradient(135deg, #f97373, var(--danger));
             box-shadow: none;
         }
 
@@ -99,7 +169,7 @@
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 8px;
-            margin: 12px 0 4px;
+            margin: 10px 0 4px;
         }
 
         form button {
@@ -127,6 +197,16 @@
                 justify-content: center;
             }
         }
+
+        footer {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ==== GRID DE CARDS CON IMAGEN ==== */
 
         .grid {
             display: grid;
@@ -195,26 +275,44 @@
 </head>
 
 <body>
-    <h1>Inventario</h1>
-    <p class="muted">Demostración: listar, ver detalle, crear, editar, eliminar y mostrar imágenes desde una URL.</p>
+    <div class="app">
+        <div class="card-shell">
+            <header>
+                <div>
+                    <h1>Inventario</h1>
+                    <p class="muted">
+                        Demostración CRUD: listar, ver detalle, crear, editar, eliminar y mostrar imágenes desde una
+                        URL.
+                    </p>
+                </div>
+                <span class="badge">API · Prisma · Render</span>
+            </header>
 
-    <div class="row">
-        <input id="detailId" type="number" placeholder="ID para detalle/edición" />
-        <button onclick="getOne()">Consultar individual</button>
+            <main>
+                <div class="row">
+                    <input id="detailId" type="number" placeholder="ID para detalle / edición" />
+                    <button class="btn-secondary" onclick="getOne()">Consultar individual</button>
+                </div>
+
+                <form onsubmit="createItem(event)">
+                    <input id="name" placeholder="Nombre" required />
+                    <input id="price" type="number" step="0.01" min="0" placeholder="Precio (≥ 0)" required />
+                    <input id="stock" type="number" step="1" min="0" placeholder="Stock (≥ 0)" value="0" />
+                    <input id="mediaUrl" type="url" placeholder="Enlace de imagen (opcional)" />
+                    <button>Agregar / Guardar</button>
+                </form>
+
+                <section>
+                    <h2 style="margin: 12px 0 4px;">Inventario</h2>
+                    <div id="itemsGrid" class="grid"></div>
+                </section>
+            </main>
+
+            <footer>
+                <span>v1 · Jahir Cruz Ortiz</span>
+            </footer>
+        </div>
     </div>
-
-    <form onsubmit="createItem(event)">
-        <input id="name" placeholder="Nombre" required />
-        <input id="price" type="number" step="0.01" placeholder="Precio" required />
-        <input id="stock" type="number" step="1" placeholder="Stock" value="0" />
-        <input id="mediaUrl" type="url" placeholder="Enlace de imagen (opcional)" />
-        <button>Agregar / Guardar</button>
-    </form>
-
-    <section>
-        <h2>Inventario</h2>
-        <div id="itemsGrid" class="grid"></div>
-    </section>
 
     <script>
         const api = (p = '') => fetch(location.origin + '/api' + p);
@@ -234,7 +332,10 @@
           <p><strong>Stock:</strong> ${i.stock}</p>
 
           <div class="actions">
-            <button onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock}, '${(i.mediaUrl || '').replaceAll("'", "\\'")}')">Editar</button>
+            <button class="btn-secondary"
+              onclick="prefill(${i.id}, '${escapeHtml(i.name)}', ${i.price}, ${i.stock}, '${(i.mediaUrl || '').replaceAll("'", "\\'")}')">
+              Editar
+            </button>
             <button class="btn-danger" onclick="del(${i.id})">Eliminar</button>
           </div>
         </div>
@@ -255,7 +356,9 @@
             const res = await api('/items/' + id);
             if (!res.ok) return alert('No encontrado');
             const i = await res.json();
-            alert(`ID: ${i.id}\nNombre: ${i.name}\nPrecio: $${i.price}\nStock: ${i.stock}\nImagen: ${i.mediaUrl || 'Sin imagen'}`);
+            alert(
+                `ID: ${i.id}\nNombre: ${i.name}\nPrecio: $${i.price}\nStock: ${i.stock}\nImagen: ${i.mediaUrl || 'Sin imagen'}`
+            );
         }
 
         async function createItem(e) {
@@ -296,7 +399,7 @@
 
         // Si hay ID en detailId → el submit actualiza (PUT) en lugar de crear
         document.querySelector('form').addEventListener('submit', async (e) => {
-            if (!document.getElementById('detailId').value) return; // createItem ya lo maneja
+            if (!document.getElementById('detailId').value) return; // createItem se encarga del POST
             e.preventDefault();
             const id = document.getElementById('detailId').value;
             const payload = bodyFromInputs();
@@ -315,11 +418,21 @@
         });
 
         function bodyFromInputs() {
+            // Fuerza que precio y stock nunca sean negativos
+            const rawPrice = Number(document.getElementById('price').value);
+            const rawStock = Number(document.getElementById('stock').value || 0);
+
+            const price = Math.max(0, isNaN(rawPrice) ? 0 : rawPrice);
+            const stock = Math.max(0, isNaN(rawStock) ? 0 : rawStock);
+
+            // Reescribe en los inputs por si el usuario puso algo raro
+            document.getElementById('price').value = price;
+            document.getElementById('stock').value = stock;
+
             return {
                 name: document.getElementById('name').value.trim(),
-                price: Number(document.getElementById('price').value),
-                stock: Number(document.getElementById('stock').value || 0),
-                // 🔥 AQUÍ estaba el problema: antes NO enviabas mediaUrl al backend
+                price,
+                stock,
                 mediaUrl: document.getElementById('mediaUrl').value.trim() || null
             };
         }
